@@ -1,17 +1,24 @@
 function transformRangeExp (exp) {
     let input = exp.split('')
     let start = 0
-    while (start < exp.length) {
-        
+    while (start < input.length) {
+        if(input[start] === '[' && input[start+2] === '-' && input[start+4] === ']'){
+            let rangeStart = input[start+1], rangeEnd = input[start+3]
+            let chars = [rangeStart]
+            while(rangeStart.charCodeAt() < rangeEnd.charCodeAt()){
+                rangeStart = String.fromCharCode(rangeStart.charCodeAt()+1)
+                chars.push(rangeStart)
+            }
+            chars = chars.join('|')
+            chars = `(${chars})`
+            chars = chars.split('')
+            let head = input.slice(0, start)
+            let tail = input.slice(start+5)
+            input = head.concat(chars, tail)
+        }
+        start+=1
     }
-    // let start = rangeExp[1], end = rangeExp[3]
-    // let chars = [start]
-    // while (start.charCodeAt() < end.charCodeAt()) {
-    //     start = String.fromCharCode(start.charCodeAt()+1)
-    //     chars.push(start)
-    // }
-    // chars = chars.join('|')
-    // return `(${chars})`
+    return input.join('')
 }
 
 // 转换 ()? 形式的表达式
@@ -42,7 +49,7 @@ function transformZeroOrMore( exp ) {
             let tail = input.slice(end+2)
             let content = input.slice(start+1, end)
             //console.log(head)
-            input = head.concat(['(','('], content, [')','|','@',')','*'], tail)
+            input = head.concat(['(','('], content, [')','|','@',')'], tail)
             pointer++
         } else {
            pointer++ 
@@ -86,4 +93,4 @@ function transformOneOrMore( exp ) {
     }
     return input.join('')
 }
-console.log(transformZeroOrMore(transformOneOrMore('((12)?a)+')))
+console.log(transformRangeExp('a[1-9]123212[a-z]b'))
