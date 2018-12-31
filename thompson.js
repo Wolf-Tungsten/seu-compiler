@@ -142,7 +142,20 @@ function thompson(postfixExp, stateBias, endName){
     endState[automa.end] = endName
     automa.end = [endState]
     automa.nextBias = stateNo
+    let alphabet = {}
+    automa.stateList.forEach( k => {
+        let subAlphabet = Object.keys(automa[k])
+        subAlphabet.forEach( l => {
+            if(l!=='@'){
+                alphabet[l]=true
+            }
+        })
+    })
+    alphabet = Object.keys(alphabet)
+    automa.alphabet = alphabet
     return automa
 }
 
-console.log(thompson(postfix('a•b'), 0, 'test'))
+module.exports = {postfix, thompson}
+
+//console.log(thompson(postfix('\\a•b'), 0, 'test'))
