@@ -115,6 +115,21 @@ function thompson(postfixExp, stateBias){
             pointer+=1
             continue
         }
+        // 执行到此处，表明是普通字符
+        let startState = stateNo++
+        let endState = stateNo++
+        let automa = {
+            start: `S${startState}`,
+            end: `S${endState}`,
+        }
+        automa.stateList = [automa.start, automa.end]
+        automa[automa.start] = {'@':[]}
+        automa[automa.end] = {'@':[]}
+        automa[automa.start][postfixExp[pointer]] = automa.end
+        automaStack.push(automa)
+        pointer += 1
     }
+    console.log(automaStack)
 }
-console.log(postfix('((a|(b)))*'))
+
+thompson(postfix('a•b'), 0)
