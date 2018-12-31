@@ -28,7 +28,7 @@ function postfix(exp){
     return output.join('')
 }
 
-function thompson(postfixExp, stateBias){
+function thompson(postfixExp, stateBias, endName){
     let automaStack = []
     let stateNo = stateBias
     let pointer = 0
@@ -129,7 +129,20 @@ function thompson(postfixExp, stateBias){
         automaStack.push(automa)
         pointer += 1
     }
-    console.log(automaStack)
+    if(automaStack.length !== 1){
+        throw Error('Thompson算法构造NFA出错')
+    }
+    let automa = automaStack[0]
+    automa.stateList = automa.stateList.sort((a,b)=>{
+        a = parseInt(a.slice(1))
+        b = parseInt(b.slice(1))
+        return a-b
+    })
+    let endState = {}
+    endState[automa.end] = endName
+    automa.end = [endState]
+    automa.nextBias = stateNo
+    return automa
 }
 
-thompson(postfix('a•b'), 0)
+console.log(thompson(postfix('a•b'), 0, 'test'))
