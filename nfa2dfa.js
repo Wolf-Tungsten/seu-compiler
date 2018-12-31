@@ -43,12 +43,96 @@ function searchClosure(nfa, startStates){
 
 // NFA的确定化
 function nfa2dfa(nfa){
+    let dfa = {}
     // merge 表 - 存储合并状态的对应关系，例如S1S2 -> I1
     let merge = {}
     let stateNo = 0 // 合并后状态的标号
     // 构造初始状态
+    let startState = searchClosure(nfa, [nfa.start])
+    startState = {
+        stateList: startState,
+        mergeName: `I${stateNo++}`
+    }
+    merge[startState.stateList.join('')] = startState
+    // 初始化dfa
+    dfa.start = 'I0'
+    dfa.end = []
+    dfa.stateList = ['I0']
+    // 迭代法扩展状态
+    let hasNextStep = true
+    while(hasNextStep){
+        hasNextStep = false
+        dfa.stateList.forEach( state => {
+            if(!dfa[state]){
+                // 如果没有构造当前状态的下一步
+                dfa[state] = {}
+                // 查找当前状态包含的状态
+                let stateList
+                Object.keys(merge).forEach(k => {
+                    if(merge[k].mergeName === state){
+                        stateList = merge[k].stateList
+                    }
+                })
+                
+                // 遍历字母表，构造epsilon闭包
+                nfa.alphabet.forEach(letter => {
+                    let extendState = {}
+                    stateList.forEach(nfaState => {
+                        //extendState[nfaState] = true
+                        if(nfa[nfaState][letter]){
+                            // 包含当前字符的下一跳
+                            // Object.keys(nfa[nfaState][letter]).forEach( nextNfaState => {
+                            //     if(nextNfaState!=='@'){
+                            //         extendState[nextNfaState] = true
+                            //     }
+                            // })
+                            extendState[nfa[nfaState][letter]] = true
+                        }
+                    })
+                    extendState = Object.keys(extendState)
+                    extendState = searchClosure(nfa, extendState)
+                    // 执行到此处，已经构造出当前状态的下一个状态
+                    let stateNameString = mergeName(extendState)
+                    if(stateNameString && !merge[stateNameString]){
+                        // 发现了一个新的状态
+                        hasNextStep = true
+                        let newStateName = `I${stateNo++}`
+                        dfa[state][letter] = newStateName
+                        dfa.stateList.push(newStateName)
+                        merge[stateNameString] = {
+                            mergeName: newStateName,
+                            stateList: extendState
+                        }
+                    } else if(stateNameString && merge[stateNameString]){
+                        dfa[state][letter] = merge[stateNameString].mergeName
+                    }
+                })
+            }
+            console.log(merge)
+            console.log(dfa)
+            console.log('\n')
+        })
+    }
+    // 重新确定终态
+    dfa.end={}
+    nfa.end.forEach(nfaEndState => {
+        Object.keys(nfaEndState).forEach(nfaState => {
+            Object.keys(merge).forEach(k => {
+                if(merge[k].stateList.indexOf(nfaState) !== -1){
+                    let dfaState = merge[k].mergeName
+                    if(!dfa.end[dfaState]){
+                        dfa.end[dfaState] = [nfaEndState[nfaState]]
+                    } else {
+                        dfa.end[dfaState].push(nfaEndState[nfaState])
+                    }
+                }
+            })
+        })
+    })
+    
+    return(dfa)
 }
 
-let nfa = thompson(postfix('a•b'), 0, 'test')
-console.log(nfa)
-console.log(searchClosure(nfa, [nfa.start, 'S1']))
+console.log(postfix('(a*)•(b|c)'))
+let nfa = thompson(postfix('(a*)•(b|c)•a'), 0, 'test') 
+console.log(nfa2dfa(nfa))

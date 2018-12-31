@@ -92,8 +92,8 @@ function thompson(postfixExp, stateBias, endName){
             continue
         }
         if(postfixExp[pointer]==='•'){
-            let top_1 = automaStack.pop()
             let top_2 = automaStack.pop()
+            let top_1 = automaStack.pop()
             let startState = stateNo++
             let endState = stateNo++
             let automa = {
