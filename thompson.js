@@ -91,7 +91,30 @@ function thompson(postfixExp, stateBias){
             pointer+=1
             continue
         }
-        
+        if(postfixExp[pointer]==='•'){
+            let top_1 = automaStack.pop()
+            let top_2 = automaStack.pop()
+            let startState = stateNo++
+            let endState = stateNo++
+            let automa = {
+                start: `S${startState}`,
+                end: `S${endState}`
+            }
+            automa.stateList = ([automa.start, automa.end]).concat(top_1.stateList, top_2.stateList)
+            automa[automa.start]={'@':[top_1.start]}
+            automa[automa.end] = {'@':[]}
+            top_1.stateList.forEach(k => {
+                automa[k] = top_1[k]
+            })
+            top_2.stateList.forEach(k => {
+                automa[k] = top_2[k]
+            })
+            automa[top_1.end]['@'].push(top_2.start)
+            automa[top_2.end]['@'].push(automa.end)
+            automaStack.push(automa)
+            pointer+=1
+            continue
+        }
     }
 }
 console.log(postfix('((a|(b)))*'))
