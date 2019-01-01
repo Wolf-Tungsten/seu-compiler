@@ -89,7 +89,7 @@ function transformOneOrMore(exp) {
             let head = input.slice(0, start)
             let tail = input.slice(end + 2)
             let content = input.slice(start + 1, end)
-            input = head.concat(['('], content, [')', '('], content, [')', '?'], tail)
+            input = head.concat(['('], content, [')', '•','('], content, [')', '?'], tail)
             pointer++
         } else {
             pointer++
@@ -136,4 +136,32 @@ function formalize(exp){
 //let testExp = '(([A-Z]|[a-z])+)•(([A-Z]|[a-z]|[0-9])?)'
 //console.log(transformZeroOrMore(transformOneOrMore(transformRangeExp(testExp))))
 
-module.exports = {transformOneOrMore, transformZeroOrMore, transformRangeExp}
+function insertPoint(exp){
+    let input = exp.split('')
+    let start = 0
+    let specialCase = ['(',')','|','*','•']
+    while (start < input.length-1) {
+        if(specialCase.indexOf(input[start]) === -1 
+        && specialCase.indexOf(input[start+1]) === -1 && input[start+1]){
+            if(input[start] === '\\'){
+                if(input[start+2] && specialCase.indexOf(input[start+2]) === -1){
+                    // 转义字符特殊处理
+                    let head = input.slice(0, start+2)
+                    let tail = input.slice(start+2)
+                    input = head.concat(['•'], tail)
+                }
+                start += 3
+                continue
+            }
+            let head = input.slice(0, start+1)
+            let tail = input.slice(start+1)
+            input = head.concat(['•'], tail)
+            start += 2
+            continue
+        }
+        start += 1
+        
+    }
+    return input.join('')
+}
+module.exports = {transformOneOrMore, transformZeroOrMore, transformRangeExp, insertPoint}

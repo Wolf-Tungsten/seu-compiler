@@ -97,6 +97,9 @@ function nfa2dfa(nfa){
                         // 发现了一个新的状态
                         hasNextStep = true
                         let newStateName = `I${stateNo++}`
+                        if(letter.length === 2){
+                            letter = letter[1]
+                        }
                         dfa[state][letter] = newStateName
                         dfa.stateList.push(newStateName)
                         merge[stateNameString] = {
@@ -108,9 +111,6 @@ function nfa2dfa(nfa){
                     }
                 })
             }
-            console.log(merge)
-            console.log(dfa)
-            console.log('\n')
         })
     }
     // 重新确定终态
@@ -133,6 +133,8 @@ function nfa2dfa(nfa){
     return(dfa)
 }
 
-console.log(postfix('(a*)•(b|c)'))
-let nfa = thompson(postfix('(a*)•(b|c)•a'), 0, 'test') 
-console.log(nfa2dfa(nfa))
+module.exports = {nfa2dfa}
+
+// console.log(postfix('(a*)•(b|c)'))
+// let nfa = thompson(postfix('(a*)•(b|c)•a'), 0, 'test') 
+// console.log(nfa2dfa(nfa))
