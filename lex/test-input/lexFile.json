@@ -11,6 +11,9 @@
     "ADD_OP":{
         "regExp":"\\+"
     },
+    "MULTI_OP":{
+        "regExp":"\\*"
+    },
     "ASSIGN_OP":{
         "regExp":"="
     },
