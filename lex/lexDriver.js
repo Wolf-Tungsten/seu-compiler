@@ -69,9 +69,9 @@ if(buf.length !== 0){
 fs.writeFileSync('./lex-out.json', JSON.stringify({tokenList}))
 let beautifulOut = []
 tokenList.forEach(t => {
-    beautifulOut.push(`<${t.type}, ${t.literal}>`)
+    beautifulOut.push(`<${t.type}>${t.literal}</${t.type}>`)
 })
 beautifulOut = beautifulOut.join('\n')
-fs.writeFileSync('./lex-out-beautiful.txt', beautifulOut)
+fs.writeFileSync('./lex-out-beautiful.xml', beautifulOut)
 
 console.log('词法分析完成，结果保存至 lex-out.json 和 lex-out-beautiful.txt')
