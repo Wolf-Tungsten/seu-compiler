@@ -1,0 +1,24 @@
+{
+    "tokenList": [
+        {
+            "type": "ID",
+            "literal": "id"
+        },
+        {
+            "type": "MULTI_OP",
+            "literal": "*"
+        },
+        {
+            "type": "ID",
+            "literal": "id"
+        },
+        {
+            "type": "ADD_OP",
+            "literal": "+"
+        },
+        {
+            "type": "ID",
+            "literal": "id"
+        }
+    ]
+}

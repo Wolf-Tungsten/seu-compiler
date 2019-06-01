@@ -1,48 +1,30 @@
-const {transformOneOrMore, transformZeroOrMore, transformRangeExp, insertPoint} = require('./lib/formalize')
-const {postfix, thompson} = require('./lib/thompson')
-const {nfa2dfa} = require('./lib/nfa2dfa')
-
 const fs = require('fs')
-const lexFilePath = process.argv[2]
 
-console.log('正在将LexFile转换成DFA...')
+const inputPath = process.argv[2]
+//const dfaPath = process.argv[3]
 
-let lex = fs.readFileSync(lexFilePath, 'utf8')
-lex = JSON.parse(lex)
-let stateBias = 1
-let nfaList = []
-Object.keys(lex).forEach(type => {
-    let item = lex[type]
-    let exp = insertPoint(transformZeroOrMore(transformOneOrMore(transformRangeExp(item.regExp))))
-    console.log(exp)
-    let nfa = thompson(postfix(exp), stateBias, type)
-    stateBias = nfa.nextBias
-    nfaList.push(nfa)
+let lexFile = fs.readFileSync(inputPath, 'utf8')
+let lexSegements = lexFile.split(/\r\n%%\r\n/)
+let preDefine = lexSegements[0]
+let regexDefine = lexSegements[1]
+let userDefine = lexSegements[2]
+
+let preDefineProgram = preDefine.split('\r\n%}\r\n')[0]
+let preDefineRegexs = preDefine.split('\r\n%}\r\n')[1].split('\r\n').slice(1, -1)
+
+// 正则表达式的替换字符
+let preDefineRegex = {} 
+preDefineRegexs.forEach( l => {
+    preDefineRegex[l.split(/[\t\s]+/)[0]] = l.split(/[\t\s]+/)[1].trim()
 })
-// 产生一系列nfa，下面将nfa合并
-let mainNfa = {
-    start:'S0',
-    end:[],
-    stateList:[],
-    S0:{'@':[]},
-    alphabet:{}
-}
+//console.log(preDefineRegex)
 
-nfaList.forEach(nfa => {
-    mainNfa.S0['@'].push(nfa.start)
-    mainNfa.stateList = mainNfa.stateList.concat(nfa.stateList)
-    mainNfa.end = mainNfa.end.concat(nfa.end)
-    nfa.stateList.forEach(stateName => {
-        mainNfa[stateName] = nfa[stateName]
-    })
-    nfa.alphabet.forEach( letter => {
-        mainNfa.alphabet[letter] = true
-    })
+//console.log(regexDefine.split(/\}[\r\n]+/))
+
+const { replacePredefinedElements, escapeQuotation } = require('./lib/lexFileParse')
+regexDefine = regexDefine.split(/\}[\r\n]+/).slice(0, -1).map(l => {
+    let lineSplit = l.split(/[\t\s]+{/);
+    return [escapeQuotation(replacePredefinedElements(lineSplit[0], preDefineRegex)), lineSplit[1].trim()]
 })
 
-mainNfa.alphabet = Object.keys(mainNfa.alphabet)
-console.log(mainNfa)
-let dfa = nfa2dfa(mainNfa)
-fs.writeFileSync('./DFA.json', JSON.stringify(dfa))
-console.log(dfa.end)
-
+console.log(regexDefine)
