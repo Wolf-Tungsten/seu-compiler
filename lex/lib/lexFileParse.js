@@ -1,7 +1,6 @@
 
 const keychar = ['(',')','+','|','[',']','?','*','.']
 function escapeQuotation(regex){
-    console.log('正在处理',regex)
     let input = regex.split('')
     let start = 0
     while(start < input.length){
@@ -10,7 +9,6 @@ function escapeQuotation(regex){
             while(end < input.length && !(input[end] === '"' && input[end-1] !== '\\')){
                 end++
             }
-            console.log(input.slice(start, end+1).join(''))
             let head = input.slice(0, start)
             let tail = input.slice(end + 1)
             for(let i = start; i < end; i++){

@@ -8,130 +8,130 @@ void comment();
 D			[0-9]
 L			[a-zA-Z_]
 H			[a-fA-F0-9]
-E			([Ee][+-]?{D}+)
-P           ([Pp][+-]?{D}+)
+E			((E|e)(\+|\-)?{D}+)
+P           ((P|p)(\+|\-)?{D}+)
 FS			(f|F|l|L)
 IS          ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 %%
-"/*"			{
+/\*			{
 	 comment();
 	 printf("MULTI_LINE_COMMENT");
 	}
-"//"[^\n]*      {
+//[^\n]*      {
 	 printf("SINGLE_LINE_COMMENT");
 	}
 
 
-"auto"			{ 
+auto			{ 
 	 printf("AUTO"); 
 	}
-"_Bool"			{ 
+_Bool			{ 
 	 printf("BOOL"); 
 	}
-"break"			{ 
+break			{ 
 	 printf("BREAK"); 
 	}
-"case"			{ 
+case			{ 
 	 printf("CASE"); 
 	}
-"char"			{ 
+char			{ 
 	 printf("CHAR"); 
 	}
-"_Complex"		{ 
+_Complex		{ 
 	 printf("COMPLEX"); 
 	}
-"const"			{ 
+const			{ 
 	 printf("CONST"); 
 	}
-"continue"		{ 
+continue		{ 
 	 printf("CONTINUE"); 
 	}
-"default"		{ 
+default		{ 
 	 printf("DEFAULT"); 
 	}
-"do"			{ 
+do			{ 
 	 printf("DO"); 
 	}
-"double"		{ 
+double		{ 
 	 printf("DOUBLE"); 
 	}
-"else"			{ 
+else			{ 
 	 printf("ELSE"); 
 	}
-"enum"			{ 
+enum			{ 
 	 printf("ENUM"); 
 	}
-"extern"		{ 
+extern		{ 
 	 printf("EXTERN"); 
 	}
-"float"			{ 
+float			{ 
 	 printf("FLOAT"); 
 	}
-"for"			{ 
+for			{ 
 	 printf("FOR"); 
 	}
-"goto"			{ 
+goto			{ 
 	 printf("GOTO"); 
 	}
-"if"			{ 
+if			{ 
 	 printf("IF"); 
 	}
-"_Imaginary"		{ 
+_Imaginary		{ 
 	 printf("IMAGINARY"); 
 	}
-"inline"		{ 
+inline		{ 
 	 printf("INLINE"); 
 	}
-"int"			{ 
+int			{ 
 	 printf("INT"); 
 	}
-"long"			{ 
+long			{ 
 	 printf("LONG"); 
 	}
-"register"		{ 
+register		{ 
 	 printf("REGISTER"); 
 	}
-"restrict"		{ 
+restrict		{ 
 	 printf("RESTRICT"); 
 	}
-"return"		{ 
+return		{ 
 	 printf("RETURN"); 
 	}
-"short"			{ 
+short			{ 
 	 printf("SHORT"); 
 	}
-"signed"		{ 
+signed		{ 
 	 printf("SIGNED"); 
 	}
-"sizeof"		{ 
+sizeof		{ 
 	 printf("SIZEOF"); 
 	}
-"static"		{ 
+static		{ 
 	 printf("STATIC"); 
 	}
-"struct"		{ 
+struct		{ 
 	 printf("STRUCT"); 
 	}
-"switch"		{ 
+switch		{ 
 	 printf("SWITCH"); 
 	}
-"typedef"		{ 
+typedef		{ 
 	 printf("TYPEDEF"); 
 	}
-"union"			{ 
+union			{ 
 	 printf("UNION"); 
 	}
-"unsigned"		{ 
+unsigned		{ 
 	 printf("UNSIGNED"); 
 	}
-"void"			{ 
+void			{ 
 	 printf("VOID"); 
 	}
-"volatile"		{ 
+volatile		{ 
 	 printf("VOLATILE"); 
 	}
-"while"			{ 
+while			{ 
 	 printf("WHILE"); 
 	}
 
@@ -148,175 +148,176 @@ IS          ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 [1-9]{D}*{IS}?		{ 
 	 printf("CONSTANT"); 
 	}
-L?'(\\.|[^\\'\n])+'	{ 
+(L)?'(\\.|[^'\n])+'	{ 
 	 printf("CONSTANT"); 
 	}
 
 {D}+{E}{FS}?		{ 
 	 printf("CONSTANT"); 
 	}
-{D}*"."{D}+{E}?{FS}?	{ 
+{D}*\.{D}+{E}?{FS}?	{ 
 	 printf("CONSTANT"); 
 	}
-{D}+"."{D}*{E}?{FS}?	{ 
+{D}+\.{D}*{E}?{FS}?	{ 
 	 printf("CONSTANT"); 
 	}
 0[xX]{H}+{P}{FS}?	{ 
 	 printf("CONSTANT"); 
 	}
-0[xX]{H}*"."{H}+{P}{FS}?     { 
+0[xX]{H}*\.{H}+{P}{FS}?     { 
 	 printf("CONSTANT"); 
 	}
-0[xX]{H}+"."{H}*{P}{FS}?     {
+0[xX]{H}+\.{H}*{P}{FS}?     {
 	printf("CONSTANT"); 
 	}
 
-L?\"(\\.|[^\\"\n])*\"	{ 
+(L)?"(\\.|[^\\"\n])*"	{ 
 	 printf("STRING_LITERAL"); 
 	}
 
-"..."			{ 
+\.\.\.			{ 
 	 printf("ELLIPSIS"); 
 	}
-">>="			{ 
+>>=			{ 
 	 printf("RIGHT_ASSIGN"); 
 	}
-"<<="			{ 
+<<=			{ 
 	 printf("LEFT_ASSIGN"); 
 	}
-"+="			{ 
+\+=			{ 
 	 printf("ADD_ASSIGN"); 
 	}
 "-="			{ 
 	 printf("SUB_ASSIGN"); 
 	}
-"*="			{ 
+\*=			{ 
 	 printf("MUL_ASSIGN"); 
 	}
-"/="			{ 
+/=			{ 
 	 printf("DIV_ASSIGN"); 
 	}
-"%="			{ 
+%=			{ 
 	 printf("MOD_ASSIGN"); 
 	}
-"&="			{ 
+&=			{ 
 	 printf("AND_ASSIGN"); 
 	}
-"^="			{ 
+\^=			{ 
 	 printf("XOR_ASSIGN"); 
 	}
-"|="			{ 
+\|=			{ 
 	 printf("OR_ASSIGN"); 
 	}
-">>"			{ 
+>>			{ 
 	 printf("RIGHT_OP"); 
 	}
-"<<"			{ 
+<<			{ 
 	 printf("LEFT_OP"); 
 	}
-"++"			{ 
+\+\+			{ 
 	 printf("INC_OP"); 
 	}
-"--"			{ 
+\-\-			{ 
 	 printf("DEC_OP"); 
 	}
-"->"			{ 
+\->			{ 
 	 printf("PTR_OP"); 
 	}
-"&&"			{ 
+&&			{ 
 	 printf("AND_OP"); 
 	}
-"||"			{ 
+\|\|			{ 
 	 printf("OR_OP"); 
 	}
-"<="			{ 
+<=			{ 
 	 printf("LE_OP"); 
 	}
-">="			{ 
+>=			{ 
 	 printf("GE_OP"); 
 	}
-"=="			{ 
+==			{ 
 	 printf("EQ_OP"); 
 	}
-"!="			{ 
+!=			{ 
 	 printf("NE_OP"); 
 	}
-";"			{ 
+;			{ 
 	printf(";"); 
 	}
-("{"|"<%")		{ 
+({|(<%))		{ 
 	 printf("{"); 
 	}
-("}"|"%>")		{ 
+(}|(%>))		{ 
 	 printf("}"); 
 	}
-","			{ 
+,			{ 
 	 printf(","); 
 	}
-":"			{ 
+:			{ 
 	 printf(":"); 
 	}
-"="			{ 
+=			{ 
 	 printf("="); 
 	}
-"("			{ 
+\(			{ 
 	 printf("("); 
 	}
-")"			{ 
+\)			{ 
 	 printf(")"); 
 	}
-("["|"<:")		{ 
+(\[|(<:))		{ 
 	 printf("["); 
 	}
-("]"|":>")		{ 
+(\]|(:>))		{ 
 	 printf("]"); 
 	}
-"."			{ 
+\.			{ 
 	 printf("."); 
 	}
-"&"			{ 
+&			{ 
 	 printf("&"); 
 	}
-"!"			{ 
+!			{ 
 	 printf("!"); 
 	}
-"~"			{ 
+~			{ 
 	 printf("~"); 
 	}
-"-"			{ 
+\-			{ 
 	 printf("-"); 
 	}
-"+"			{ 
+\+			{ 
 	 printf("+"); 
 	}
-"*"			{ 
+\*			{ 
 	 printf("*"); 
 	}
-"/"			{ 
+/			{ 
 	 printf("/"); 
 	}
-"%"			{ 
+%			{ 
 	 printf("%"); 
 	}
-"<"			{ 
+<			{ 
 	printf("<"); 
 	}
-">"			{ 
+>			{ 
 	 printf(">"); 
 	}
-"^"			{ 
+\^			{ 
 	 printf("^"); 
 	}
-"|"			{ 
+\|			{ 
 	 printf("||"); 
 	}
-"?"			{ 
+\?			{ 
 	 printf("?"); 
 	}
 
 [ \t\v\n\f]		{
 	printf("SPACE");
-} 
+}
+
 .			{
 	printf("ERROR!");
 }
