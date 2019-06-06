@@ -122,7 +122,8 @@ function expandDFAItem(dfaItem, grammar){
                     } else {
                         dfaItem.items[name] = {
                             predictor:newPredictor,
-                            position:0
+                            position:0,
+                            rightPart:p.rightPart
                         }
                         expandFlag = true
                     }
