@@ -7,9 +7,17 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Lex",
             "program": "${workspaceFolder}/lex/lex.js",
             "args": ["${workspaceFolder}/lex.l"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Yacc",
+            "program": "${workspaceFolder}/yacc/yacc.js",
+            "args": ["${workspaceFolder}/yacc/yacc.y"]
         }
+
     ]
 }
