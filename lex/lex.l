@@ -18,7 +18,7 @@ IS          ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 	 comment();
 	 printf("MULTI_LINE_COMMENT");
 	}
-//[^\n]*      {
+//([^\n])*      {
 	 printf("SINGLE_LINE_COMMENT");
 	}
 
@@ -148,7 +148,7 @@ while			{
 [1-9]({D}*){IS}?		{ 
 	 printf("CONSTANT"); 
 	}
-(L)?'(\\.|[^'\n])+'	{ 
+(L)?'((\\.)|[^'\n])+'	{ 
 	 printf("CONSTANT"); 
 	}
 
@@ -171,7 +171,7 @@ while			{
 	printf("CONSTANT"); 
 	}
 
-(L)?"((\\.|[^\\"\n])*)"	{ 
+(L)?"(((\\.)|[^\\"\n])*)"	{ 
 	 printf("STRING_LITERAL"); 
 	}
 

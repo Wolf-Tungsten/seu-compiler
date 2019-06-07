@@ -15,10 +15,10 @@ IS          ((u|U)|(u|U)?(l|L|ll|LL)|(l|L|ll|LL)(u|U))
 
 %%
 
-(L)?"((\\.|[^\\"\n])*)"	{ 
+(L)?"(((\\.)|[^\\"\n])*)"	{ 
 	 printf("STRING_LITERAL"); 
 	}
-
+    
 %%
 
 void comment(){

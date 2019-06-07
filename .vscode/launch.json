@@ -9,7 +9,14 @@
             "request": "launch",
             "name": "Lex",
             "program": "${workspaceFolder}/lex/lex.js",
-            "args": ["${workspaceFolder}/lex/test_lex.l"]
+            "args": ["${workspaceFolder}/lex/lex.l"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "LexDriver",
+            "program": "${workspaceFolder}/lex/lexDriver.js",
+            "args": ["${workspaceFolder}/lex/test-input/test_1.src", "${workspaceFolder}/lex/test-input/DFA.json"]
         },
         {
             "type": "node",

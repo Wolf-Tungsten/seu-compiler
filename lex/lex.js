@@ -32,7 +32,7 @@ const {nfa2dfa} = require('./lib/nfa2dfa')
 
 regexDefine = regexDefine.map((k, index) => {return {
     type:''+index,
-    regex:formalize(k[0]),
+    regex:formalize(k[0].trim()),
     action:k[1]
 }})
 
@@ -40,7 +40,7 @@ let stateBias = 1
 let nfaList = []
 
 regexDefine.forEach(define => {
-    let nfa = thompson(postfix(define.regex), stateBias, define.type)
+    let nfa = thompson(postfix(define.regex), stateBias, define.type, define.action)
     stateBias = nfa.nextBias
     nfaList.push(nfa)
 })
@@ -65,8 +65,9 @@ nfaList.forEach(nfa => {
     })
 })
 
+console.log(regexDefine[0])
 mainNfa.alphabet = Object.keys(mainNfa.alphabet)
-console.log(mainNfa)
+
 let dfa = nfa2dfa(mainNfa)
 fs.writeFileSync('./DFA.json', JSON.stringify(dfa))
 console.log(dfa.end)

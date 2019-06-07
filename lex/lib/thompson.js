@@ -1,16 +1,18 @@
+const { processRegexEscape } = require('./formalize')
 // 中缀表达式转后缀表达式
 function postfix(exp){
+    let input = processRegexEscape(exp)
     let stack = [], output = []
     let pointer = 0
-    while(pointer < exp.length){
+    while(pointer < input.length){
         // 运算符和左括号
-        if ( exp[pointer] === '*' && exp[pointer-1] !== '\\' ||
-        exp[pointer] === '|' && exp[pointer-1] !== '\\' ||
-        exp[pointer] === '(' && exp[pointer-1] !== '\\' ||
-        exp[pointer] === '•' && exp[pointer-1] !== '\\' 
+        if ( input[pointer] === '*' ||
+        input[pointer] === '|'  ||
+        input[pointer] === '('  ||
+        input[pointer] === '•'  
         ) {
-            stack.push(exp[pointer])
-        } else if (exp[pointer] === ')' && exp[pointer-1] !== '\\') {
+            stack.push(input[pointer])
+        } else if (input[pointer] === ')' && input[pointer-1] !== '\\') {
             // 右括号
             let top = stack.pop()
             while(top!=='('){
@@ -18,36 +20,36 @@ function postfix(exp){
                 top = stack.pop()
             }
         } else {
-            output.push(exp[pointer])
+            output.push(input[pointer])
         }
         pointer++
     }
     while(stack.length>0){
         output.push(stack.pop())
     }
-    return output.join('')
+    return output
 }
 
-function thompson(postfixExp, stateBias, endName){
+function thompson(postfixExp, stateBias, endName, action){
     let automaStack = []
     let stateNo = stateBias
     let pointer = 0
     while(pointer < postfixExp.length){
-        if(postfixExp[pointer]==='\\'){
-            let startState = stateNo++
-            let endState = stateNo++
-            let automa = {
-                start: `S${startState}`,
-                end: `S${endState}`,
-            }
-            automa.stateList = [automa.start, automa.end]
-            automa[automa.start] = {'ø':[]}
-            automa[automa.end] = {'ø':[]}
-            automa[automa.start][`\\${postfixExp[pointer+1]}`] = automa.end
-            automaStack.push(automa)
-            pointer += 2
-            continue
-        }
+        // if(postfixExp[pointer]==='\\'){
+        //     let startState = stateNo++
+        //     let endState = stateNo++
+        //     let automa = {
+        //         start: `S${startState}`,
+        //         end: `S${endState}`,
+        //     }
+        //     automa.stateList = [automa.start, automa.end]
+        //     automa[automa.start] = {'ø':[]}
+        //     automa[automa.end] = {'ø':[]}
+        //     automa[automa.start][`\\${postfixExp[pointer+1]}`] = automa.end
+        //     automaStack.push(automa)
+        //     pointer += 2
+        //     continue
+        // }
         if(postfixExp[pointer]==='|'){
             let top_1 = automaStack.pop()
             let top_2 = automaStack.pop()
@@ -125,7 +127,7 @@ function thompson(postfixExp, stateBias, endName){
         automa.stateList = [automa.start, automa.end]
         automa[automa.start] = {'ø':[]}
         automa[automa.end] = {'ø':[]}
-        automa[automa.start][postfixExp[pointer]] = automa.end
+        automa[automa.start][postfixExp[pointer].slice(-1)] = automa.end // 把转译字符恢复
         automaStack.push(automa)
         pointer += 1
     }
@@ -139,7 +141,7 @@ function thompson(postfixExp, stateBias, endName){
         return a-b
     })
     let endState = {}
-    endState[automa.end] = endName
+    endState[automa.end] = { name:endName, action }
     automa.end = [endState]
     automa.nextBias = stateNo
     let alphabet = {}
