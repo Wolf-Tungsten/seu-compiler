@@ -41,8 +41,8 @@ function thompson(postfixExp, stateBias, endName){
                 end: `S${endState}`,
             }
             automa.stateList = [automa.start, automa.end]
-            automa[automa.start] = {'@':[]}
-            automa[automa.end] = {'@':[]}
+            automa[automa.start] = {'ø':[]}
+            automa[automa.end] = {'ø':[]}
             automa[automa.start][`\\${postfixExp[pointer+1]}`] = automa.end
             automaStack.push(automa)
             pointer += 2
@@ -58,16 +58,16 @@ function thompson(postfixExp, stateBias, endName){
                 end: `S${endState}`
             }
             automa.stateList = ([automa.start, automa.end]).concat(top_1.stateList, top_2.stateList)
-            automa[automa.start]={'@':[top_1.start, top_2.start]}
-            automa[automa.end] = {'@':[]}
+            automa[automa.start]={'ø':[top_1.start, top_2.start]}
+            automa[automa.end] = {'ø':[]}
             top_1.stateList.forEach(k => {
                 automa[k] = top_1[k]
             })
             top_2.stateList.forEach(k => {
                 automa[k] = top_2[k]
             })
-            automa[top_1.end]['@'].push(automa.end)
-            automa[top_2.end]['@'].push(automa.end)
+            automa[top_1.end]['ø'].push(automa.end)
+            automa[top_2.end]['ø'].push(automa.end)
             automaStack.push(automa)
             pointer+=1
             continue
@@ -81,12 +81,12 @@ function thompson(postfixExp, stateBias, endName){
                 end: `S${endState}`
             }
             automa.stateList = ([automa.start, automa.end]).concat(top.stateList)
-            automa[automa.end] = {'@':[]}
-            automa[automa.start]={'@':[top.start, automa.end]}
+            automa[automa.end] = {'ø':[]}
+            automa[automa.start]={'ø':[top.start, automa.end]}
             top.stateList.forEach(k => {
                 automa[k] = top[k]
             })
-            automa[top.end]['@'].push(top.start, automa.end)
+            automa[top.end]['ø'].push(top.start, automa.end)
             automaStack.push(automa)
             pointer+=1
             continue
@@ -101,16 +101,16 @@ function thompson(postfixExp, stateBias, endName){
                 end: `S${endState}`
             }
             automa.stateList = ([automa.start, automa.end]).concat(top_1.stateList, top_2.stateList)
-            automa[automa.start]={'@':[top_1.start]}
-            automa[automa.end] = {'@':[]}
+            automa[automa.start]={'ø':[top_1.start]}
+            automa[automa.end] = {'ø':[]}
             top_1.stateList.forEach(k => {
                 automa[k] = top_1[k]
             })
             top_2.stateList.forEach(k => {
                 automa[k] = top_2[k]
             })
-            automa[top_1.end]['@'].push(top_2.start)
-            automa[top_2.end]['@'].push(automa.end)
+            automa[top_1.end]['ø'].push(top_2.start)
+            automa[top_2.end]['ø'].push(automa.end)
             automaStack.push(automa)
             pointer+=1
             continue
@@ -123,8 +123,8 @@ function thompson(postfixExp, stateBias, endName){
             end: `S${endState}`,
         }
         automa.stateList = [automa.start, automa.end]
-        automa[automa.start] = {'@':[]}
-        automa[automa.end] = {'@':[]}
+        automa[automa.start] = {'ø':[]}
+        automa[automa.end] = {'ø':[]}
         automa[automa.start][postfixExp[pointer]] = automa.end
         automaStack.push(automa)
         pointer += 1
@@ -146,7 +146,7 @@ function thompson(postfixExp, stateBias, endName){
     automa.stateList.forEach( k => {
         let subAlphabet = Object.keys(automa[k])
         subAlphabet.forEach( l => {
-            if(l!=='@'){
+            if(l!=='ø'){
                 alphabet[l]=true
             }
         })

@@ -10,7 +10,8 @@ let escapeMap = {
     '^':'\\^',
     '?':'\\?',
     '|':'\\|',
-    '.':'\\.'
+    '.':'\\.',
+    '\\':'\\\\'
 }
 
 let escapeMapReverse = {
@@ -25,7 +26,8 @@ let escapeMapReverse = {
     '\\^':'^',
     '\\?':'?',
     '\\|':'|',
-    '\\.':'.'
+    '\\.':'.',
+    '\\\\':'\\'
 }
 function transformRangeExp(exp) {
     let input = exp.split('')
@@ -179,7 +181,7 @@ function transformZeroOrMore(exp) {
             let tail = input.slice(end + 2)
             let content = input.slice(start + 1, end)
             //console.log(head)
-            input = head.concat(['(', '(', '('], content, [')', '*', ')', '|', '@', ')'], tail)
+            input = head.concat(['(', '(', '('], content, [')', '*', ')', '|', 'ø', ')'], tail)
             pointer++
         } else {
             pointer++
@@ -229,22 +231,34 @@ function transformOneOrMore(exp) {
 //console.log(transformZeroOrMore(transformOneOrMore(transformRangeExp(testExp))))
 
 function insertPoint(exp){
-    let input = exp.split('')
+    let input = processRegexEscape(exp)
     let start = 0
     let specialCase = ['(',')','|','*','•']
     while (start < input.length-1) {
         if(specialCase.indexOf(input[start]) === -1 
         && specialCase.indexOf(input[start+1]) === -1 && input[start+1]){
-            if(input[start] === '\\'){
-                if(input[start+2] && specialCase.indexOf(input[start+2]) === -1){
-                    // 转义字符特殊处理
-                    let head = input.slice(0, start+2)
-                    let tail = input.slice(start+2)
-                    input = head.concat(['•'], tail)
-                }
-                start += 3
-                continue
-            }
+            
+            let head = input.slice(0, start+1)
+            let tail = input.slice(start+1)
+            input = head.concat(['•'], tail)
+            start += 2
+            continue
+        } else if (specialCase.indexOf(input[start]) === -1 
+        && input[start+1] === '(' && input[start+1]){
+            let head = input.slice(0, start+1)
+            let tail = input.slice(start+1)
+            input = head.concat(['•'], tail)
+            start += 2
+            continue
+        } else if (input[start] === ')' 
+        && specialCase.indexOf(input[start+1]) === -1 && input[start+1]){
+            let head = input.slice(0, start+1)
+            let tail = input.slice(start+1)
+            input = head.concat(['•'], tail)
+            start += 2
+            continue
+        } else if (input[start] === ')' 
+        && input[start+1] === '(' && input[start+1]){
             let head = input.slice(0, start+1)
             let tail = input.slice(start+1)
             input = head.concat(['•'], tail)
@@ -273,7 +287,6 @@ function processUnicodeEscape(exp){
         'f':'\f',
         'v':'\v',
         'r':'\r',
-        '\\':'\\',
         's':' '
     }
     while(start < input.length){
@@ -337,14 +350,21 @@ function escapeEscape(exp){
 // 将表达式规范化 - BUG
 function formalize(exp){
     
-    let pointLess = escapeEscape(
+    return insertPoint(
+    escapeEscape(
     transformZeroOrMore(
     transformOneOrMore(
     transformRangeExpAdvanced(
     transformNegRangeExp(
     transformAllExp(
-    processUnicodeEscape(exp)))))))
-
-    return pointLess
+    processUnicodeEscape(exp))))))))
 }
-module.exports = {transformOneOrMore, transformZeroOrMore, transformRangeExp, insertPoint, transformRangeExpAdvanced, transformNegRangeExp, transformAllExp, formalize, processUnicodeEscape, processRegexEscape}
+
+function test(exp){
+    exp = processUnicodeEscape(exp)
+    exp = transformAllExp(exp)
+    return exp
+}
+
+
+module.exports = {transformOneOrMore, transformZeroOrMore, transformRangeExp, insertPoint, transformRangeExpAdvanced, transformNegRangeExp, transformAllExp, formalize, processUnicodeEscape, processRegexEscape, test}

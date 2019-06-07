@@ -53,7 +53,7 @@ function transformZeroOrMore(exp) {
             let tail = input.slice(end + 2)
             let content = input.slice(start + 1, end)
             //console.log(head)
-            input = head.concat(['(', '(', '('], content, [')', '*', ')', '|', '@', ')'], tail)
+            input = head.concat(['(', '(', '('], content, [')', '*', ')', '|', 'ø', ')'], tail)
             pointer++
         } else {
             pointer++

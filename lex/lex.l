@@ -135,17 +135,17 @@ while			{
 	 printf("WHILE"); 
 	}
 
-{L}({L}|{D})*		{ 
+{L}(({L}|{D})*)		{ 
 	 printf("IDENTIFIER"); 
 	}
 
 0[xX]{H}+{IS}?		{ 
 	 printf("CONSTANT"); 
 	}
-0[0-7]*{IS}?		{ 
+0([0-7]*){IS}?		{ 
 	 printf("CONSTANT"); 
 	}
-[1-9]{D}*{IS}?		{ 
+[1-9]({D}*){IS}?		{ 
 	 printf("CONSTANT"); 
 	}
 (L)?'(\\.|[^'\n])+'	{ 
@@ -155,23 +155,23 @@ while			{
 {D}+{E}{FS}?		{ 
 	 printf("CONSTANT"); 
 	}
-{D}*\.{D}+{E}?{FS}?	{ 
+({D}*)\.{D}+{E}?{FS}?	{ 
 	 printf("CONSTANT"); 
 	}
-{D}+\.{D}*{E}?{FS}?	{ 
+{D}+\.({D}*){E}?{FS}?	{ 
 	 printf("CONSTANT"); 
 	}
 0[xX]{H}+{P}{FS}?	{ 
 	 printf("CONSTANT"); 
 	}
-0[xX]{H}*\.{H}+{P}{FS}?     { 
+0[xX]({H}*)\.{H}+{P}{FS}?     { 
 	 printf("CONSTANT"); 
 	}
-0[xX]{H}+\.{H}*{P}{FS}?     {
+0[xX]{H}+\.({H}*){P}{FS}?     {
 	printf("CONSTANT"); 
 	}
 
-(L)?"(\\.|[^\\"\n])*"	{ 
+(L)?"((\\.|[^\\"\n])*)"	{ 
 	 printf("STRING_LITERAL"); 
 	}
 

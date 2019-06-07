@@ -24,12 +24,12 @@ let mainNfa = {
     start:'S0',
     end:[],
     stateList:[],
-    S0:{'@':[]},
+    S0:{'ø':[]},
     alphabet:{}
 }
 
 nfaList.forEach(nfa => {
-    mainNfa.S0['@'].push(nfa.start)
+    mainNfa.S0['ø'].push(nfa.start)
     mainNfa.stateList = mainNfa.stateList.concat(nfa.stateList)
     mainNfa.end = mainNfa.end.concat(nfa.end)
     nfa.stateList.forEach(stateName => {

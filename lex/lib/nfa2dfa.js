@@ -9,7 +9,13 @@ function mergeName(stateList){
 }
 
 // 搜索eplison闭包
+let closureCache = {}
 function searchClosure(nfa, startStates){
+    let cacheName = mergeName(startStates)
+    if(closureCache[cacheName]){
+        console.log('命中cache：', cacheName)
+        return closureCache[cacheName]
+    }
     let closure = {}
     startStates.forEach(k=>{
         closure[k] = true
@@ -20,7 +26,7 @@ function searchClosure(nfa, startStates){
         let currentKeys = Object.keys(closure)
         let nextStep = []
         currentKeys.forEach(k=>{
-            nextStep = nextStep.concat(nfa[k]['@'])
+            nextStep = nextStep.concat(nfa[k]['ø'])
         })
         nextStep.forEach(k=>{
             closure[k] = true
@@ -38,6 +44,7 @@ function searchClosure(nfa, startStates){
         b = parseInt(b.slice(1))
         return a-b
     })
+    closureCache[cacheName] = closureList
     return closureList
 }
 
@@ -61,10 +68,11 @@ function nfa2dfa(nfa){
     // 迭代法扩展状态
     let hasNextStep = true
     while(hasNextStep){
+        console.log(merge)
         hasNextStep = false
         dfa.stateList.forEach( state => {
             if(!dfa[state]){
-                // 如果没有构造当前状态的下一步
+                // 如果没有, 构造当前状态的下一步
                 dfa[state] = {}
                 // 查找当前状态包含的状态
                 let stateList
@@ -82,7 +90,7 @@ function nfa2dfa(nfa){
                         if(nfa[nfaState][letter]){
                             // 包含当前字符的下一跳
                             // Object.keys(nfa[nfaState][letter]).forEach( nextNfaState => {
-                            //     if(nextNfaState!=='@'){
+                            //     if(nextNfaState!=='ø'){
                             //         extendState[nextNfaState] = true
                             //     }
                             // })

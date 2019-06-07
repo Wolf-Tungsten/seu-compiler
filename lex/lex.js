@@ -23,10 +23,52 @@ preDefineRegexs.forEach( l => {
 const { replacePredefinedElements, escapeQuotation } = require('./lib/lexFileParse')
 regexDefine = regexDefine.split(/\}[\r\n]+/).slice(0, -1).map(l => {
     let lineSplit = l.split(/[\t\s]+{/);
-    return [escapeQuotation(replacePredefinedElements(lineSplit[0], preDefineRegex)), lineSplit[1].trim()]
+    return [replacePredefinedElements(lineSplit[0], preDefineRegex), lineSplit[1].trim()]
 })
 
-const { formalize, processUnicodeEscape, processRegexEscape, transformRangeExpAdvanced, transformNegRangeExp } = require('./lib/formalize')
-regexDefine = regexDefine.map(k => [formalize(k[0]), k[1]])
+const { test, formalize, processUnicodeEscape, processRegexEscape, transformRangeExpAdvanced, transformNegRangeExp, insertPoint } = require('./lib/formalize')
+const {postfix, thompson} = require('./lib/thompson')
+const {nfa2dfa} = require('./lib/nfa2dfa')
 
-console.log(regexDefine)
+regexDefine = regexDefine.map((k, index) => {return {
+    type:''+index,
+    regex:formalize(k[0]),
+    action:k[1]
+}})
+
+let stateBias = 1
+let nfaList = []
+
+regexDefine.forEach(define => {
+    let nfa = thompson(postfix(define.regex), stateBias, define.type)
+    stateBias = nfa.nextBias
+    nfaList.push(nfa)
+})
+
+let mainNfa = {
+    start:'S0',
+    end:[],
+    stateList:[],
+    S0:{'ø':[]},
+    alphabet:{}
+}
+
+nfaList.forEach(nfa => {
+    mainNfa.S0['ø'].push(nfa.start)
+    mainNfa.stateList = mainNfa.stateList.concat(nfa.stateList)
+    mainNfa.end = mainNfa.end.concat(nfa.end)
+    nfa.stateList.forEach(stateName => {
+        mainNfa[stateName] = nfa[stateName]
+    })
+    nfa.alphabet.forEach( letter => {
+        mainNfa.alphabet[letter] = true
+    })
+})
+
+mainNfa.alphabet = Object.keys(mainNfa.alphabet)
+console.log(mainNfa)
+let dfa = nfa2dfa(mainNfa)
+fs.writeFileSync('./DFA.json', JSON.stringify(dfa))
+console.log(dfa.end)
+
+

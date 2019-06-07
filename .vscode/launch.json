@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Lex",
             "program": "${workspaceFolder}/lex/lex.js",
-            "args": ["${workspaceFolder}/lex.l"]
+            "args": ["${workspaceFolder}/lex/test_lex.l"]
         },
         {
             "type": "node",

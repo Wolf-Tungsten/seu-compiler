@@ -20,7 +20,7 @@ function searchClosure(nfa, startStates){
         let currentKeys = Object.keys(closure)
         let nextStep = []
         currentKeys.forEach(k=>{
-            nextStep = nextStep.concat(nfa[k]['@'])
+            nextStep = nextStep.concat(nfa[k]['ø'])
         })
         nextStep.forEach(k=>{
             closure[k] = true
@@ -82,7 +82,7 @@ function nfa2dfa(nfa){
                         if(nfa[nfaState][letter]){
                             // 包含当前字符的下一跳
                             // Object.keys(nfa[nfaState][letter]).forEach( nextNfaState => {
-                            //     if(nextNfaState!=='@'){
+                            //     if(nextNfaState!=='ø'){
                             //         extendState[nextNfaState] = true
                             //     }
                             // })
