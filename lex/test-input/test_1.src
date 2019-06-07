@@ -1,5 +1,0 @@
-// ggagsgdg
-int main(){
-    string a = "\n\rgaoruihao";
-    printf("%s", a);
-}

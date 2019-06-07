@@ -13,7 +13,6 @@ let closureCache = {}
 function searchClosure(nfa, startStates){
     let cacheName = mergeName(startStates)
     if(closureCache[cacheName]){
-        console.log('命中cache：', cacheName)
         return closureCache[cacheName]
     }
     let closure = {}
@@ -68,7 +67,6 @@ function nfa2dfa(nfa){
     // 迭代法扩展状态
     let hasNextStep = true
     while(hasNextStep){
-        console.log(merge)
         hasNextStep = false
         dfa.stateList.forEach( state => {
             if(!dfa[state]){

@@ -1,0 +1,11 @@
+int main(){
+/*comment
+1
+2
+3*/
+	int a=3;
+	double b=2;
+	int c=a+(int)b;
+	printf("%d",c);
+	return 0;
+}

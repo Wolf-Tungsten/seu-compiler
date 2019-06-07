@@ -21,6 +21,13 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "DFA2Cpp",
+            "program": "${workspaceFolder}/lex/dfaToCpp.js",
+            "args": ["${workspaceFolder}/lex/test-input/DFA.json"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Yacc",
             "program": "${workspaceFolder}/yacc/yacc.js",
             "args": ["${workspaceFolder}/yacc/test_yacc.y"]

@@ -1,0 +1,13 @@
+int main(int argn,char** argv){
+int i=argv[1];
+switch(i)
+{
+case 0:
+printf("ZERO");break;
+case 1:
+printf("ONE");break;
+default:
+printf("DEFAULT");break;
+}
+return 0;
+}

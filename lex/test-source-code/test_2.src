@@ -1,0 +1,10 @@
+int main(){ // comment!
+	int a=3;
+	if(a ==4){
+		a=2;
+	}else{
+		a=a+2-3;
+	}
+	printf("%d",a);
+	return 0;
+}
