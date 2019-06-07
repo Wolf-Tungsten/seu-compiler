@@ -4,7 +4,7 @@ const inputPath = process.argv[2]
 //const dfaPath = process.argv[3]
 
 const { loadYaccFile } = require('./lib/loader')
-const { yaccToGrammar, expandDFAItem, generateLR1DFA } = require('./lib/core')
+const { yaccToGrammar, expandDFAItem, generateLR1DFA, LR1toLALR1, dfaToParsingTable } = require('./lib/core')
 
 let yaccFile = fs.readFileSync(inputPath, 'utf8')
 yaccFile = loadYaccFile(yaccFile)
@@ -22,6 +22,7 @@ let I0 = {
 }
 
 
-let DFA = generateLR1DFA(I0, grammar)
-
-fs.writeFileSync('./c99_lr1_dfa.json', JSON.stringify(DFA))
+let LR1DFA = generateLR1DFA(I0, grammar)
+let LALR1DFA = LR1toLALR1(LR1DFA)
+let parsingTable = dfaToParsingTable(LALR1DFA, grammar)
+console.log(DFA)

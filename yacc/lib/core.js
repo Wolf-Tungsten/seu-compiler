@@ -2,6 +2,16 @@ function arrayInclude(arr, value){
     return arr.indexOf(value) !== -1
 }
 
+function arrayUnion(arr1, arr2){
+    let union = arr1.slice(0)
+    arr2.forEach(el => {
+        if(union.indexOf(el) === -1){
+            union.push(el)
+        }
+    })
+    return union
+}
+
 /* 
 Yacc文件转换为文法
 文法：S、Vt、Vn、P
@@ -133,11 +143,15 @@ function expandDFAItem(dfaItem, grammar){
         })
     }
     // 对 dfaItem 计算签名，用于后续判断是否出现重复状态
+    // signature 是完整签名
     let signature = Object.keys(dfaItem.items).map( name => {
         return `${name}-${dfaItem.items[name].predictor.join('|')}`
     })
     signature = signature.sort().join('•')
     dfaItem.signature = signature
+    // lalr1Signature 是判断同心项的签名，用于生成LALR1
+    let lalr1Signature = Object.keys(dfaItem.items).sort().join('•')
+    dfaItem.lalr1Signature = lalr1Signature
     return dfaItem
 }
 
@@ -170,7 +184,6 @@ function nextStep(dfaItem, edge){
 
 function generateLR1DFA(I0, grammar){
     let lr1Dfa = {
-        items:{}
     } // lr1Dfa
     let lr1DfaSignatureSet = {} // 用于去重的签名hash
     let dfaItemQueue = [] // 等待计算队列
@@ -195,11 +208,88 @@ function generateLR1DFA(I0, grammar){
                 currentItem.edge[edge] = lr1DfaSignatureSet[nextItem.signature]
             }
         })
-        lr1Dfa.items[currentItem.name] = currentItem
+        lr1Dfa[currentItem.name] = currentItem
     }
     return lr1Dfa
 }
 
-module.exports = { yaccToGrammar, expandDFAItem, first, generateLR1DFA }
+function LR1toLALR1(lr1Dfa){
+    let lalr1DFA = {}
+    let counter = 0
+    let lalr1SignatureMap = {}
+    let stateMap = {} // 从 LR1 状态 到 LALR1 状态的映射
+
+    Object.keys(lr1Dfa).forEach(stateName => {
+        if(lalr1SignatureMap[lr1Dfa[stateName].lalr1Signature]){
+            let lalr1StateName = lalr1SignatureMap[lr1Dfa[stateName].lalr1Signature] // 找到LALR1状态名称
+            // 终结符取并集
+            Object.keys(lalr1DFA[lalr1StateName].items).forEach(p => {
+                lalr1DFA[lalr1StateName].items[p].predictor = arrayUnion(
+                    lalr1DFA[lalr1StateName].items[p].predictor,
+                    lr1Dfa[stateName].items[p].predictor
+                )
+            })
+            // 记录LR1-LALR1状态映射关系
+            stateMap[stateName] = lalr1StateName           
+        } else {
+            let newStateName = `I${counter++}`
+            // 尽可能深拷贝
+            lalr1DFA[newStateName] = {
+                edge:{...lr1Dfa[stateName].edge},
+                items:{...lr1Dfa[stateName].items}
+            }
+            lalr1SignatureMap[lr1Dfa[stateName].lalr1Signature] = newStateName
+            // 记录LR1-LALR1状态映射关系
+            stateMap[stateName] = newStateName
+        }
+    })
+
+    // 遍历 lalr1DFA 更新映射
+    Object.keys(lalr1DFA).forEach(stateName => {
+        Object.keys(lalr1DFA[stateName].edge).forEach(v => {
+            lalr1DFA[stateName].edge[v] = stateMap[lalr1DFA[stateName].edge[v]]
+        })
+    })
+    console.log(stateMap)
+    return lalr1DFA
+}
+
+function dfaToParsingTable(dfa, grammar) {
+    let parsingTable = {}
+    Object.keys(dfa).forEach(state => {
+        let tableState = state.slice(1)
+        parsingTable[tableState] = { action:{}, goto:{} }
+        // 移进和GOTO
+        Object.keys(dfa[state].edge).forEach(edge => {
+            if(grammar.isVn(edge)){
+                // 非终结符填入 GOTO 子表
+                parsingTable[tableState].goto[edge] = dfa[state].edge[edge].slice(1)
+            } else {
+                // 终结符填入 ACTION 子表 - 移进动作不会有冲突
+                parsingTable[tableState].action[edge] = [`S${dfa[state].edge[edge].slice(1)}`]
+            }
+        })
+        // 归约操作
+        Object.keys(dfa[state].items).forEach(item => {
+            if(dfa[state].items[item].position === dfa[state].items[item].rightPart.length){
+                // 点移动到末尾的情况需要处理
+                dfa[state].items[item].predictor.forEach( predictor => {
+                    if(!parsingTable[tableState].action[predictor]){
+                        parsingTable[tableState].action[predictor] = []
+                    }
+                    parsingTable[tableState].action[predictor].push(`r${item.split('-')[0]}`)
+                })
+            }
+        })
+        Object.keys(parsingTable[tableState].action).forEach(vt => {
+            if(parsingTable[tableState].action[vt].length > 1){
+                parsingTable[tableState].action[vt] = parsingTable[tableState].action[vt].filter( action => action.startsWith('r')).sort()
+            }
+            parsingTable[tableState].action[vt] = parsingTable[tableState].action[vt][0]
+        })
+    })
+    return parsingTable
+}
+module.exports = { yaccToGrammar, expandDFAItem, first, generateLR1DFA, LR1toLALR1, dfaToParsingTable }
 
 
