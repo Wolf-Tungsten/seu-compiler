@@ -132,9 +132,74 @@ function expandDFAItem(dfaItem, grammar){
             }
         })
     }
+    // 对 dfaItem 计算签名，用于后续判断是否出现重复状态
+    let signature = Object.keys(dfaItem.items).map( name => {
+        return `${name}-${dfaItem.items[name].predictor.join('|')}`
+    })
+    signature = signature.sort().join('•')
+    dfaItem.signature = signature
     return dfaItem
 }
 
-module.exports = { yaccToGrammar, expandDFAItem, first }
+// 计算所有出边
+function getOutEdge(dfaItem){
+    let outEdge = {}
+    Object.keys(dfaItem.items).forEach( i => {
+        if(dfaItem.items[i].position < dfaItem.items[i].rightPart.length){
+            outEdge[dfaItem.items[i].rightPart[dfaItem.items[i].position]] = true
+        }
+    })
+    return Object.keys(outEdge)
+}
+
+// 给定项目和出边计算扩展项目
+function nextStep(dfaItem, edge){
+    let newDfaItem = { items:{} }
+    Object.keys(dfaItem.items).forEach( i => {
+        let pCode = i.split('-')[0]
+        if(dfaItem.items[i].rightPart[dfaItem.items[i].position] === edge){
+            newDfaItem.items[`${pCode}-${dfaItem.items[i].position + 1}`] = {
+                position:dfaItem.items[i].position + 1,
+                predictor:dfaItem.items[i].predictor,
+                rightPart:dfaItem.items[i].rightPart
+            }
+        }
+    })
+    return newDfaItem
+}
+
+function generateLR1DFA(I0, grammar){
+    let lr1Dfa = {
+        items:{}
+    } // lr1Dfa
+    let lr1DfaSignatureSet = {} // 用于去重的签名hash
+    let dfaItemQueue = [] // 等待计算队列
+    let nameCounter = 1 // 命名计数器 I0、I1 ...
+    I0 = expandDFAItem(I0, grammar)
+    dfaItemQueue.push(I0)
+    lr1DfaSignatureSet[I0.signature] = 'I0'
+    while(dfaItemQueue.length > 0){
+        let currentItem = dfaItemQueue.shift()
+        currentItem.edge = {}
+        let outEdges = getOutEdge(currentItem)
+        outEdges.forEach(edge => {
+            let nextItem = nextStep(currentItem, edge)
+            nextItem = expandDFAItem(nextItem, grammar)
+            if(!lr1DfaSignatureSet[nextItem.signature]){
+                nextItem.name = `I${nameCounter++}`
+                lr1DfaSignatureSet[nextItem.signature] = nextItem.name
+                dfaItemQueue.push(nextItem)
+                currentItem.edge[edge] = nextItem.name
+            } else {
+                // 查找签名对应的项目
+                currentItem.edge[edge] = lr1DfaSignatureSet[nextItem.signature]
+            }
+        })
+        lr1Dfa.items[currentItem.name] = currentItem
+    }
+    return lr1Dfa
+}
+
+module.exports = { yaccToGrammar, expandDFAItem, first, generateLR1DFA }
 
 

@@ -16,7 +16,7 @@
             "request": "launch",
             "name": "Yacc",
             "program": "${workspaceFolder}/yacc/yacc.js",
-            "args": ["${workspaceFolder}/yacc/test_yacc.y"]
+            "args": ["${workspaceFolder}/yacc/yacc.y"]
         }
 
     ]

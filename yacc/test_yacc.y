@@ -1,6 +1,6 @@
 %token NUMBER
 
-%start S_start
+%start E
 %%
 
 S_start
