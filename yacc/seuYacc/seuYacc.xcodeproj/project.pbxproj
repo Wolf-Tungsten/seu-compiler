@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		19F5137622AB307E007165C9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19F5137522AB307E007165C9 /* main.cpp */; };
+		19F5137D22AB4F57007165C9 /* yacc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19F5137C22AB4F57007165C9 /* yacc.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +24,7 @@
 
 /* Begin PBXFileReference section */
 		19F5137222AB307E007165C9 /* seuYacc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = seuYacc; sourceTree = BUILT_PRODUCTS_DIR; };
-		19F5137522AB307E007165C9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		19F5137C22AB4F57007165C9 /* yacc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = yacc.cpp; path = ../../../yacc.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +57,7 @@
 		19F5137422AB307E007165C9 /* seuYacc */ = {
 			isa = PBXGroup;
 			children = (
-				19F5137522AB307E007165C9 /* main.cpp */,
+				19F5137C22AB4F57007165C9 /* yacc.cpp */,
 			);
 			path = seuYacc;
 			sourceTree = "<group>";
@@ -118,7 +118,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				19F5137622AB307E007165C9 /* main.cpp in Sources */,
+				19F5137D22AB4F57007165C9 /* yacc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

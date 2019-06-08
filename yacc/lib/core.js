@@ -65,6 +65,17 @@ function yaccToGrammar(yaccFile){
         })
         return res
     }
+    grammar.getLeftPart = (code) => {
+        let res
+        Object.keys(grammar.p).forEach((vn) => {
+            grammar.p[vn].forEach(rightPart => {
+                if(rightPart.code == code){
+                    res = vn
+                }
+            })
+        })
+        return res
+    }
 
     return grammar
 }
@@ -250,7 +261,6 @@ function LR1toLALR1(lr1Dfa){
             lalr1DFA[stateName].edge[v] = stateMap[lalr1DFA[stateName].edge[v]]
         })
     })
-    console.log(stateMap)
     return lalr1DFA
 }
 

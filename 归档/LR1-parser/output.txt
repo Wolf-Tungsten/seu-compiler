@@ -1,9 +1,0 @@
-F -> ID
-T -> F
-F -> ID
-T -> T MULTI_OP F
-E -> T
-F -> ID
-T -> F
-E -> E ADD_OP T
-完成

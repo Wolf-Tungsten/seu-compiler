@@ -1,11 +1,8 @@
 %token NUMBER
 
 %start E
-%%
 
-S_start
-	: E
-	;
+%%
 	
 E
 	: E '+' T

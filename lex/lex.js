@@ -16,9 +16,6 @@ let preDefineRegex = {}
 preDefineRegexs.forEach( l => {
     preDefineRegex[l.split(/[\t\s]+/)[0]] = l.split(/[\t\s]+/)[1].trim()
 })
-//console.log(preDefineRegex)
-
-//console.log(regexDefine.split(/\}[\r\n]+/))
 
 const { replacePredefinedElements, escapeQuotation } = require('./lib/lexFileParse')
 regexDefine = regexDefine.split(/\}[\r\n]+/).slice(0, -1).map(l => {
@@ -37,7 +34,7 @@ regexDefine = regexDefine.map((k, index) => {return {
     regex:formalize(k[0].trim()),
     action:k[1]
 }})
-console.log('完成')
+console.log('完成') // .l 文件解析结果
 
 process.stdout.write('通过thompson算法生成NFA...')
 let stateBias = 1
@@ -48,7 +45,7 @@ regexDefine.forEach(define => {
     stateBias = nfa.nextBias
     nfaList.push(nfa)
 })
-console.log('完成')
+console.log('完成') // NFA 结构
 
 process.stdout.write('NFA转换成DFA.....')
 let mainNfa = {
@@ -75,7 +72,7 @@ nfaList.forEach(nfa => {
 mainNfa.alphabet = Object.keys(mainNfa.alphabet)
 
 let dfa = nfa2dfa(mainNfa)
-console.log('完成')
+console.log('完成') // DFA 结构
 
 process.stdout.write('保存DFA为JSON格式...')
 dfa.userDefineProgram = userDefineProgram

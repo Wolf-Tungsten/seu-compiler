@@ -9,6 +9,7 @@ const { yaccToGrammar, expandDFAItem, generateLR1DFA, LR1toLALR1, dfaToParsingTa
 let yaccFile = fs.readFileSync(inputPath, 'utf8')
 yaccFile = loadYaccFile(yaccFile)
 let grammar = yaccToGrammar(yaccFile)
+console.log('解析.y完成')
 
 let I0 = {
     name:'I0', // DFA 项目名称
@@ -23,6 +24,11 @@ let I0 = {
 
 
 let LR1DFA = generateLR1DFA(I0, grammar)
+console.log('生成LR1-DFA完成')
 let LALR1DFA = LR1toLALR1(LR1DFA)
+console.log('生成LALR1-DFA完成')
 let parsingTable = dfaToParsingTable(LALR1DFA, grammar)
-console.log(DFA)
+console.log('生成PT完成')
+const { parsingTableToCpp } = require('./lib/parsingTableToCpp')
+
+parsingTableToCpp(parsingTable, grammar)
